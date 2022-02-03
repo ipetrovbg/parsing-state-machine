@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::error::Error;
 use crate::utils;
+use serde::{Serialize, Serializer};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum StepDefinition {
@@ -9,6 +10,67 @@ pub enum StepDefinition {
     Http(HttpDefinition),
 }
 
+#[derive(Debug, Serialize)]
+pub struct HttpStrType {
+    #[serde(rename = "type")]
+    pub typ: String,
+    pub url: String,
+    pub body: Option<String>
+}
+
+#[derive(Debug, Serialize)]
+pub struct ParseStrType {
+    #[serde(rename = "type")]
+    pub typ: String,
+    pub content: String
+}
+
+#[derive(Debug)]
+pub enum StrOrNum {
+    Str(String),
+    Num(i32)
+}
+
+impl Serialize for StrOrNum {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+    {
+        match self {
+            StrOrNum::Str(str) => {
+                serializer.serialize_str(str)
+            }
+            StrOrNum::Num(num) => {
+                serializer.serialize_i32(num.clone() as i32)
+            }
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct ConvertStrType {
+    #[serde(rename = "type")]
+    pub typ: String,
+    pub from: String,
+    pub to: String,
+    pub source: StrOrNum
+}
+
+#[derive(Debug, Serialize)]
+pub struct StrStep {
+    #[serde(rename = "type")]
+    pub typ: String,
+    pub uuid: String,
+    pub name: String,
+    #[serde(rename = "errorOnFail")]
+    pub error_on_fail: String,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
+    pub next: Option<String>,
+    pub http: Option<HttpStrType>,
+    pub parse: Option<ParseStrType>,
+    pub convert: Option<ConvertStrType>
+}
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Step {

@@ -33,7 +33,12 @@ impl<'de> Deserialize<'de> for Step {
         let uuid = json.get(UUID).expect(UUID).as_str().unwrap();
         let name = json.get(NAME).expect(NAME).as_str().unwrap();
         let error_on_fail = json.get(ERROR_ON_FAIL).expect(ERROR_ON_FAIL).as_str().unwrap();
-        let next = json.get(NEXT).expect(NEXT).as_str().unwrap();
+        let next: Option<String> = match json.get(NEXT).expect(NEXT).as_str() {
+            None => None,
+            Some(some) => {
+                Some(some.to_owned())
+            }
+        };
         let created_at = json.get(CREATED_AT).expect(CREATED_AT).as_str().unwrap();
 
         let definition = match typ {
@@ -170,7 +175,7 @@ impl<'de> Deserialize<'de> for Step {
         };
 
         Ok(Step {
-            next: Some(next.to_owned()),
+            next,
             name: name.to_owned(),
             uuid: uuid.to_owned(),
             definition,
@@ -180,6 +185,6 @@ impl<'de> Deserialize<'de> for Step {
     }
 }
 
-pub fn run_parse(step_str: &str) -> serde_json::Result<Vec<Step>> {
-    serde_json::from_str::<Vec<Step>>(step_str)
+pub fn run_parse(steps_str: &str) -> serde_json::Result<Vec<Step>> {
+    serde_json::from_str::<Vec<Step>>(steps_str)
 }
