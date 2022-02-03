@@ -7,7 +7,8 @@ cargo run
 ```
 
 #### Result
-![image](https://user-images.githubusercontent.com/12900528/151717032-73735e4b-97b6-433a-bced-cf7310cbebda.png)
+![image](https://user-images.githubusercontent.com/12900528/152290934-e6e6882d-0f06-4e60-b625-f707febe9b63.png)
+
 
 ### Example Json definition
 
